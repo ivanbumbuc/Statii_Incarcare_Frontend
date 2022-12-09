@@ -1,26 +1,19 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {Provider} from "react-redux";
+import { Store } from 'redux';
+import { ApplicationState } from './reducers/type';
 
-function App() {
+
+type MainAppProps = {
+    store: Store<ApplicationState>;
+};
+
+function App(props:MainAppProps) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <p>Salut</p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Provider store={props.store}>
+        {<p>hello</p>}
+
+      </Provider>
   );
 }
 

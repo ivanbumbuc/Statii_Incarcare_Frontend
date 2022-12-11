@@ -16,6 +16,9 @@ import Login from "./Login";
 import CreateAccount from "./CreateAccount";
 import HomePage from "./HomePage";
 import * as actionCreators from "../reducers/start/user/actionUser"
+import { styled, useTheme } from "@mui/material/styles";
+
+  
 
 function Pages () {
 
@@ -24,6 +27,8 @@ function Pages () {
     const [isAdmin,setIsAdmin] = useState<boolean>(false);
     const dispatch= useDispatch();
     const {setUser}=bindActionCreators(actionCreators,dispatch); 
+    const [open, setOpen] = useState(false);
+   
 
     useEffect(() => {
         let id2 = getCookie("id");
@@ -39,12 +44,12 @@ function Pages () {
     },[isLogged]);
     return(
         <BrowserRouter>
-              <Routes>
+        <Routes>
                   <Route path="/" element={<Login/>}/>
                   <Route path="/create" element={<CreateAccount/>}/>
                   <Route path="/home" element={<HomePage /> }/>
               </Routes>
-          </BrowserRouter>
+        </BrowserRouter>
     );
 }
 export default Pages;

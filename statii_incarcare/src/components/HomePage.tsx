@@ -1,10 +1,13 @@
 import { Box } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "typescript-cookie";
+import { getStatiiMap } from "../api/statii";
 import { ApplicationState } from "../reducers/type";
+import AppBarResponsive from "./AppBarResponsive";
 import BasicMap from "./BasicMap";
+import ListofStatii from "./ListofStatii";
 
 function HomePage () {
     const userStates = useSelector<ApplicationState>(state => state.startReducer.userReducer) as UserState;
@@ -15,28 +18,33 @@ function HomePage () {
         {
             id: null,
             name: "cv",
-            km: 12,
-            city:"Timisoara",
-            address:"",
-            latitude : 45.75554707085215,
-            longitude : 21.22867584228516,
-        },
+            city: "Timisoara",
+            address: "",
+            prize: "1:dc, 2:pt, 5:ac",
+            latitude: 45.75554707085215,
+            longitude: 21.22867584228516,
+        }
     ]);
 
     const [center,setCenter] = useState({lat: 45.75554707085215,lng:21.22867584228516});
 
-    // useEffect(() => {
-    //     getStatii("Timisoara").then((res) =>
-    //     setStatii(res));
-    // }, []); /* <-- add this */
+    useEffect(() => {
+
+        getStatiiMap("Timisoara").then((res) =>
+        setStatii(res.data))
+    .catch(err => {
+console.log(err.message);
+    });
+
+    }, []); /* <-- add this */
     
-    // useEffect(() => {
-    //   const interval = setInterval(() => {
-    //       getStatii("Timisoara").then((res) =>
-    //       setStatii(res));
-    //   }, 5000);
-    //   return () => clearInterval(interval);
-    // }, []);
+    useEffect(() => {
+      const interval = setInterval(() => {
+          getStatiiMap("Timisoara").then((res) =>
+          setStatii(res.data));
+      }, 5000);
+      return () => clearInterval(interval);
+    }, []);
 
     React.useEffect(() => {
         let x = getCookie("id");
@@ -45,11 +53,13 @@ function HomePage () {
     },[userStates]);
     return(
         <div>
-            <p>{userStates.user.id}</p>
-            {/* <Box marginBottom={10}>
+            <AppBarResponsive></AppBarResponsive>
+            <Box marginTop={0.5}  >
       <BasicMap statiiList={statiiList} hasPopup={true} center={center}/>
-             </Box> */}
-    </div>
+             </Box>
+             <ListofStatii statiiList={statiiList}></ListofStatii>
+        </div>
+        
     );
 }
 export default HomePage;

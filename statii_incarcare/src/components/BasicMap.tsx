@@ -34,7 +34,7 @@ let r = 6371;
 return(c * r).toFixed(2);
 }
 
-function BasicMap() {
+function BasicMap(props:any) {
 
     const [userlatitude, setUserlatitude] = useState(0.2222222)
     const [userlongitude, setUserLongitude] = useState(0.2222222)
@@ -55,29 +55,27 @@ function BasicMap() {
     )
 
     return(
-        <div></div>
-    //     <MapContainer center={center} zoom={ZOOM_LEVEL}>
-    //     <TileLayer
-    //         url={osm.maptiler.url}
-    //         attribution={osm.maptiler.attribution}
-    //     />
-    //  <div>{statiiList?.map((sc)=>{
-    //         return( 
-    //         <Marker position={{lat: sc===undefined ? 0 : sc.latitude ,lng: sc===undefined? 0 : sc.longitude}} icon={markerIcon} key={Math.random()}>
-    //             {hasPopup ? 
-    //             <Popup>
-    //                 <b>Statie: </b> {sc?.name}<br/>
-                    
-    //                 <b>{distance(userlatitude,sc.latitude,userlongitude,sc.longitude) } KM away</b>
-    //             </Popup> : null}
-    //         </Marker>)
-    //     })
-    //     }
-    //     </div>
-    //     <Marker position={{lat:userlatitude, lng : userlongitude}}icon={userIcon}></Marker>
+        <MapContainer center={props.center} zoom={ZOOM_LEVEL}>
+        <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      />
+     <div>{props.statiiList?.map((sc:any)=>{
+            return( 
+            <Marker position={{lat: sc===undefined ? 0 : sc.latitude ,lng: sc===undefined? 0 : sc.longitude}} icon={markerIcon} key={Math.random()}>
+                {props.hasPopup ? 
+                <Popup>
+                    <b>Statie: </b> {sc?.name}<br/>
+                    <b>{distance(userlatitude,sc.latitude,userlongitude,sc.longitude) } KM away</b>
+                </Popup> : null}
+            </Marker>)
+        })
+        }
+        </div>
+        <Marker position={{lat:userlatitude, lng : userlongitude}}icon={userIcon}></Marker>
         
 
-    // </MapContainer>
+    </MapContainer>
     );
 
 }

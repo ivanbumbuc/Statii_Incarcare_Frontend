@@ -18,6 +18,7 @@ import { getCookie } from 'typescript-cookie';
 import HomePage from './components/HomePage';
 import * as actionCreators from "../src/reducers/start/user/actionUser"
 import Pages from './components/Pages';
+import {MapContainer, TileLayer} from "react-leaflet"
 
 type MainAppProps = {
     store: Store<ApplicationState>;

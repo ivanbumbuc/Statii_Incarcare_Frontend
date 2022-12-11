@@ -34,7 +34,7 @@ let r = 6371;
 return(c * r).toFixed(2);
 }
 
-function BasicMap({statiiList,hasPopup,center}) {
+function BasicMap() {
 
     const [userlatitude, setUserlatitude] = useState(0.2222222)
     const [userlongitude, setUserLongitude] = useState(0.2222222)
@@ -55,28 +55,29 @@ function BasicMap({statiiList,hasPopup,center}) {
     )
 
     return(
-        <MapContainer center={center} zoom={ZOOM_LEVEL}>
-        <TileLayer
-            url={osm.maptiler.url}
-            attribution={osm.maptiler.attribution}
-        />
-     <div>{statiiList?.map((sc)=>{
-            return( 
-            <Marker position={{lat: sc===undefined ? 0 : sc.latitude ,lng: sc===undefined? 0 : sc.longitude}} icon={markerIcon} key={Math.random()}>
-                {hasPopup ? 
-                <Popup>
-                    <b>Statie: </b> {sc?.name}<br/>
+        <div></div>
+    //     <MapContainer center={center} zoom={ZOOM_LEVEL}>
+    //     <TileLayer
+    //         url={osm.maptiler.url}
+    //         attribution={osm.maptiler.attribution}
+    //     />
+    //  <div>{statiiList?.map((sc)=>{
+    //         return( 
+    //         <Marker position={{lat: sc===undefined ? 0 : sc.latitude ,lng: sc===undefined? 0 : sc.longitude}} icon={markerIcon} key={Math.random()}>
+    //             {hasPopup ? 
+    //             <Popup>
+    //                 <b>Statie: </b> {sc?.name}<br/>
                     
-                    <b>{distance(userlatitude,sc.latitude,userlongitude,sc.longitude) } KM away</b>
-                </Popup> : null}
-            </Marker>)
-        })
-        }
-        </div>
-        <Marker position={{lat:userlatitude, lng : userlongitude}}icon={userIcon}></Marker>
+    //                 <b>{distance(userlatitude,sc.latitude,userlongitude,sc.longitude) } KM away</b>
+    //             </Popup> : null}
+    //         </Marker>)
+    //     })
+    //     }
+    //     </div>
+    //     <Marker position={{lat:userlatitude, lng : userlongitude}}icon={userIcon}></Marker>
         
 
-    </MapContainer>
+    // </MapContainer>
     );
 
 }

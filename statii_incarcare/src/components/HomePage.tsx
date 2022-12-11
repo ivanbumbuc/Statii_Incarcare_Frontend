@@ -8,7 +8,7 @@ import BasicMap from "./BasicMap";
 
 function HomePage () {
     const userStates = useSelector<ApplicationState>(state => state.startReducer.userReducer) as UserState;
-    console.log(userStates.user.id);
+    
     const navigate = useNavigate();
 
     const [statiiList, setStatii] = useState([
@@ -25,18 +25,18 @@ function HomePage () {
 
     const [center,setCenter] = useState({lat: 45.75554707085215,lng:21.22867584228516});
 
-    useEffect(() => {
-        getStatii("Timisoara").then((res) =>
-        setStatii(res));
-    }, []); /* <-- add this */
+    // useEffect(() => {
+    //     getStatii("Timisoara").then((res) =>
+    //     setStatii(res));
+    // }, []); /* <-- add this */
     
-    useEffect(() => {
-      const interval = setInterval(() => {
-          getStatii("Timisoara").then((res) =>
-          setStatii(res));
-      }, 5000);
-      return () => clearInterval(interval);
-    }, []);
+    // useEffect(() => {
+    //   const interval = setInterval(() => {
+    //       getStatii("Timisoara").then((res) =>
+    //       setStatii(res));
+    //   }, 5000);
+    //   return () => clearInterval(interval);
+    // }, []);
 
     React.useEffect(() => {
         let x = getCookie("id");
@@ -45,9 +45,10 @@ function HomePage () {
     },[userStates]);
     return(
         <div>
-            <Box marginBottom={10}>
+            <p>{userStates.user.id}</p>
+            {/* <Box marginBottom={10}>
       <BasicMap statiiList={statiiList} hasPopup={true} center={center}/>
-             </Box>
+             </Box> */}
     </div>
     );
 }

@@ -20,7 +20,7 @@ function HomePage () {
             name: "cv",
             city: "Timisoara",
             address: "",
-            prize: "1:dc, 2:pt, 5:ac",
+            plugs: "1:dc, 2:pt, 5:ac",
             latitude: 45.75554707085215,
             longitude: 21.22867584228516,
         }

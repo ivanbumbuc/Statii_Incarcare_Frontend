@@ -16,6 +16,7 @@ import Login from "./Login";
 import CreateAccount from "./CreateAccount";
 import HomePage from "./HomePage";
 import * as actionCreators from "../reducers/start/user/actionUser"
+import MyAccount from "./MyAccount";
 
 function Pages () {
 
@@ -43,6 +44,7 @@ function Pages () {
                   <Route path="/" element={<Login/>}/>
                   <Route path="/create" element={<CreateAccount/>}/>
                   <Route path="/home" element={<HomePage /> }/>
+                  <Route path="/myaccount" element={<MyAccount/>}/>
               </Routes>
           </BrowserRouter>
     );

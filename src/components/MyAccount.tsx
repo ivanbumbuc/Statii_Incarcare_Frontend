@@ -167,7 +167,7 @@ function MyAccount() {
                     </DialogContent>
                     <DialogActions>
                         <Button color="error" onClick={handleClose}>Cancel</Button>
-                        <Button color="secondary" onClick={handleClose}>Save</Button>
+                        <Button color="success" onClick={handleClose}>Save</Button>
                     </DialogActions>
                 </Dialog>
                 <Grid

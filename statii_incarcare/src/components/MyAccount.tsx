@@ -9,7 +9,7 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { css } from "@emotion/react";
-import {Checkbox, InputLabel, Link, TablePagination} from '@mui/material';
+import {Checkbox, Chip, InputLabel, Link, TablePagination} from '@mui/material';
 import {getCookie} from "typescript-cookie";
 import {useState} from "react";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -42,9 +42,9 @@ function MyAccount(){
     const [userInfo, setUserInfo] = useState(
         {
             id: null,
-            name: "test",
+            name: "test@gmail.com",
             password: "12345",
-            is_admin: "true",
+            is_admin: "false",
             is_charging: "false"
         }
         );
@@ -172,15 +172,15 @@ function MyAccount(){
             <Grid
                 item
                 xs={12}
-                sm={8}
-                //md={5}
+                sm={6}
+                md={8}
                 component={Paper}
                 elevation={6}
                 square
                 sx={{
-                    marginTop:"30px",
+                    marginTop:{xs:0,md:"30px"},
                     minHeight:"600px",
-                    height: "90vh",
+                    height: {md:"90vh",xs:"100vh"},
                     borderRadius: "16px",
                     backgroundImage: "#FCFCFC",
                     //backgroundImage: "linear-gradient(#b5fff2, #75efa4)",
@@ -194,108 +194,98 @@ function MyAccount(){
                         flexDirection: "column",
                         alignItems: "center",
                         flexWrap: "wrap",
-                        mt: 10,
+                        mt: 5,
                     }}
                 >
                     <Avatar sx={{ mb:1, bgcolor: "#9c27b0" }}>
                         <AccountCircleIcon/>
                     </Avatar>
-                    <Typography component="h1" variant="h5">
+                    <Typography sx={{ display:{xs:"inline",md:"inline"}}} component="h1" variant="h5">
                         My Account
                     </Typography>
-                    <Box
-                        component="div"
-                        sx={{ //mt:1,
-                            display:'flex',
-                            flexDirection:'row',
-                            alignContent:'center',
-                            justifyContent: 'space-evenly',
-                    }}
+                    <Grid container mt={5} sx={{ flexDirection:{md:'row',xs:"column"} }}
                     >
-                        <Grid container direction="column" flexGrow={0} justifyContent="flex-start" overflow="auto">
-                        <Grid container mt={5} direction="row" alignItems="center" justifyContent="flex-start">
-                            <Grid item>
-                                <PersonIcon/>
+                        <Grid item sx={{flexDirection:"column"}} xs={12} md={4} justifyContent="flex-start" overflow="autonpm">
+                            <Grid item xs={12} md={12}>
+                                <Typography>
+                                    <PersonIcon sx={{ verticalAlign:"bottom"}} />
+                                    {userInfo.name}
+                                </Typography>
+                            {/*<Chip*/}
+                            {/*    sx={{mt:2}}*/}
+                            {/*    icon={<PersonIcon/>}*/}
+                            {/*    label={userInfo.name}*/}
+                            {/*    variant="outlined"*/}
+                            {/*/>*/}
                             </Grid>
-                            <Grid item sx={{textAlign:'right'}} xs={4}>
-                                Username:
-                            </Grid>
-                            <Grid item marginLeft={1}>
-                                {userInfo.name}
-                            </Grid>
-
-                        </Grid>
-                        <Grid container direction="row" alignItems="center" justifyContent="flex-start">
-                            <Grid item>
-                                <AdminPanelSettingsIcon/>
-                            </Grid>
-                            <Grid item sx={{textAlign:'right'}} xs={4}>
-                                Is admin:
-                            </Grid>
-                            <Grid item marginLeft={1}>
-                                {userInfo.is_admin=="true" ? <CheckCircleIcon color="secondary"/> : <CancelIcon color="error"/>}
-                            </Grid>
-                        </Grid>
-                        <Grid container direction="row" alignItems="center" justifyContent="flex-start">
-                            <Grid item>
-                                <BatteryChargingFullIcon/>
-                            </Grid>
-                            <Grid item sx={{textAlign:'right'}} xs={4}>
-                                Is charging:
-                            </Grid>
-                            <Grid item marginLeft={1}>
-                                {userInfo.is_charging=="true" ? <CheckCircleIcon color="secondary"/> : <CancelIcon color="error"/>}
-                            </Grid>
-                        </Grid>
-                            <Paper sx={{ mt:3.9, overflow: 'hidden' }}>
-                            <TableContainer sx={{ maxHeight: 270 }} component={Paper}>
-                                <Table sx={{
-                                    border: 2,
-                                    borderColor: 'secondary.main'
-                                }} aria-label="simple table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Car Plate</TableCell>
-                                            <TableCell align="center">Actions</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {carList
-                                            .slice(pageCar * rowsPerPageCar, pageCar * rowsPerPageCar + rowsPerPageCar)
-                                            .map((row) => (
-                                            <TableRow
-                                                key={row.car_plate}
-                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                            >
-                                                <TableCell component="th" scope="row">
-                                                    {row.car_plate}
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <Button id={row.id} onClick={handleClickOpen} color="secondary">Edit</Button>
-                                                    <Button color="error">Delete</Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <TablePagination
-                                rowsPerPageOptions={[3]}
-                                component="div"
-                                count={carList.length}
-                                rowsPerPage={rowsPerPageCar}
-                                page={pageCar}
-                                onPageChange={handleChangePageCar}
-                                onRowsPerPageChange={handleChangeRowsPerPageCar}
+                            <Grid item xs={12} md={12}>
+                            <Chip
+                                icon={<AdminPanelSettingsIcon/>}
+                                label={userInfo.is_admin=="true" ? "Admin" : "User"}
+                                variant="outlined"
                             />
-                            </Paper>
+                            <Chip
+                                icon={<BatteryChargingFullIcon/>}
+                                label={userInfo.is_charging=="true" ? "Charging" : "Not Charging"}
+                                variant="outlined"
+                            />
+                            </Grid>
+                            <Grid item xs={12} md={12}>
+                                <Paper sx={{ mt:1, overflow: 'hidden' }}>
+                                    <TableContainer sx={{ overflowY:"auto",
+                                        maxHeight: {md:'36vh',xs:'20vh'} }} component={Paper}>
+                                        <Table sx={{
+                                            border: 2,
+                                            borderColor: 'secondary.main'
+                                        }} aria-label="simple table">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>Car Plate</TableCell>
+                                                    <TableCell align="center">Actions</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {carList
+                                                    .slice(pageCar * rowsPerPageCar, pageCar * rowsPerPageCar + rowsPerPageCar)
+                                                    .map((row) => (
+                                                        <TableRow
+                                                            key={row.car_plate}
+                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                        >
+                                                            <TableCell component="th" scope="row">
+                                                                {row.car_plate}
+                                                            </TableCell>
+                                                            <TableCell align="center">
+                                                                <Button id={row.id} onClick={handleClickOpen} color="secondary">Edit</Button>
+                                                                <Button color="error">Delete</Button>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                    <TablePagination
+                                        rowsPerPageOptions={[3]}
+                                        component="div"
+                                        count={carList.length}
+                                        rowsPerPage={rowsPerPageCar}
+                                        page={pageCar}
+                                        onPageChange={handleChangePageCar}
+                                        onRowsPerPageChange={handleChangeRowsPerPageCar}
+                                    />
+                                </Paper>
+                            </Grid>
                         </Grid>
-                        <Grid container direction="column" overflow="auto">
-                        <Paper sx={{ ml:5, mt:5, overflow: 'hidden' }}>
+                        <Grid item xs={12} md={8} sx={{
+                            mt: {xs:0, md:5},
+                            ml: {xs:0, md:0}
+                        }}>
+                            <Typography sx={{ }}>Booking history</Typography>
+                        <Paper sx={{mt:0, overflow: 'hidden' }}>
                         <TableContainer sx={{
-                            mt:1,
-                            mb:1,
-                        }} component={Paper}>
+                            maxHeight: {xs:'30vh',md:'50vh'}}
+                        } component={Paper}>
+
                             <Table sx={{
                                 border: 2,
                                 color: 'secondary.main'
@@ -341,8 +331,7 @@ function MyAccount(){
                         />
                         </Paper>
                         </Grid>
-                        <Typography align="center"></Typography>
-                    </Box>
+                    </Grid>
                 </Box>
             </Grid>
 

@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import StatieCard from "./StatieCard";
 import StatieIcon from "../assets/StatieIcon.png";
+import {getPlugsStation} from "../api/plugs";
 
 interface IStatie {
     id: string;
@@ -16,14 +17,22 @@ interface IStatie {
     longitude: Number;
 }
 
+interface Plugs{
+    id: string;
+    name: string;
+}
 
 function ListofStatii(props: any) {
 
+    const [plugsStation, setPlugsSatation] = useState([{ id:"1", name:"c"}] as Plugs[]);
     const handleOpenDialog = (statieId: string) => {
         setOpenDialog(true);
         setCurrentStatieId(statieId);
         const found = props.statiiList.find((element: any) => element?.id === statieId);
         setCurrentStatie(found as IStatie);
+        getPlugsStation(statieId).then((response) => {
+            setPlugsSatation(response.data);
+        }).catch((err) => console.log(err));
     };
     const [currentStatieId, setCurrentStatieId] = useState<string>("");
     const [openDialog, setOpenDialog] = useState(false);
@@ -57,8 +66,6 @@ function ListofStatii(props: any) {
 
         // }).catch(err=>{toast.error(errorHandler(err.message))});
     }
-
-    console.log(props.statiiList?.length + " " + props.statiiList[0]?.id);
     if (props.statiiList?.length > 0) {
         return (
             <Box style={{marginLeft: "7%", marginRight: "10%", marginTop: "100px"}}>
@@ -67,6 +74,8 @@ function ListofStatii(props: any) {
                     handleOpenDialog={handleOpenDialogCard}
                     handleClaimDialog={handleClaimDialog}
                     claimHide={false}
+                    statieId={currentStatieId}
+                    plugsStation={plugsStation}
                     paperProps={{
                         style: {
                             width: 'auto',
@@ -80,7 +89,6 @@ function ListofStatii(props: any) {
                         isNotLight
                         city={currentStatie.city}
                         address={currentStatie.address}
-                        plugs={currentStatie.plugs}
                     />
                 </ResponsiveDialog>
                 <Grid container spacing={10}>
@@ -89,11 +97,10 @@ function ListofStatii(props: any) {
                                 <Grid item xs={10} md={6} lg={3} key={sc?.id} style={{paddingTop: "20px"}}>
                                     <StatieCard
                                         StatieName={sc.name}
-                                        handleOpenDialog={handleOpenDialog}
+                                        handleOpenDialog={() => {handleOpenDialog(sc.id)}}
                                         statieId={sc.id}
                                         city={sc.city}
                                         address={sc.address}
-                                        plugs={sc.plugs}
                                     ></StatieCard>
                                 </Grid>
                             );

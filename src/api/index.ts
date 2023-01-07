@@ -15,3 +15,7 @@ export const logInCall = async (url: string,email:string,password:string) => {
 export const getAllStatiiMap = async (url: string,city:string) => {
     return await axiosInstance.get(url,{params: {city:city}});
 }
+
+export const getPlugs = async (url: string, id: string) => {
+    return await axiosInstance.get(url, {params: {id: id}});
+}

@@ -10,8 +10,42 @@ const axiosInstance = axios.create({
 export const logInCall = async (url: string,email:string,password:string) => {
     return await axiosInstance.post(url,{email:email,password:password});
 };
-  
 
 export const getAllStatiiMap = async (url: string,city:string) => {
     return await axiosInstance.get(url,{params: {city:city}});
+}
+
+export const getPlugs = async (url: string, id: string) => {
+    return await axiosInstance.get(url, {params: {id: id}});
+}
+
+export const getStartHours = async (url: string, plugId: string) => {
+    return await axiosInstance.get(url, {params: {plugId: plugId}});
+}
+
+export const getEndHours = async (url: string,startHour: string, plugId: string) => {
+    return await axiosInstance.get(url, {params: {startingHour:startHour, plugId: plugId}});
+}
+
+export const addBooking = async (url: string, userId:string,plugId:string,startinHour:string,endingHour:string) => {
+    return await axiosInstance.post(url,{userId:userId, plugId:plugId, startingHour:startinHour, endingHour:endingHour});
+};
+
+export const getAccount = async (url: string, userId: string) => {
+    return await axiosInstance.get(url, {params: {userId: userId}});
+}
+export const getAccountBooking = async (url: string, userId: string) => {
+    return await axiosInstance.get(url, {params: {userId: userId}});
+}
+
+export const getAccountCars = async (url: string, userId: string) => {
+    return await axiosInstance.get(url, {params: {userId: userId}});
+}
+
+export const editCar = async (url: string, carId:string, car_plate:string) => {
+    return await axiosInstance.put(url,{carId:carId, car_plate:car_plate});
+}
+
+export const deleteCar = async (url: string, carId:string) => {
+    return await axiosInstance.delete(url,{params:{carId:carId}});
 }

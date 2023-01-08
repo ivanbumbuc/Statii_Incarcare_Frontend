@@ -4,6 +4,9 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import {Button, CardActionArea, CardActions, TableCell, TableRow} from "@mui/material";
 import imgSt from "../assets/imgSt.jpg";
+import {getPlugs} from "../api";
+import {getPlugsStation} from "../api/plugs";
+import {useState} from "react";
 
 type StationCardProps = {
     StatieName: string;
@@ -12,17 +15,19 @@ type StationCardProps = {
     isNotLight?: boolean;
     city: string;
     address: string;
-    plugs: string;
 };
 
+interface Plugs{
+    id: string;
+    type: string;
+}
 function StatieCard({
                         StatieName,
                         handleOpenDialog,
                         statieId,
                         isNotLight,
                         city,
-                        plugs,
-                        address
+                        address,
                     }: StationCardProps) {
     return (
         <TableRow>
@@ -40,7 +45,6 @@ function StatieCard({
                                 <>
                                     <b>City: {city}</b><br/>
                                     <b>Address: {address}</b><br/>
-                                    <b>Plugs: {plugs}</b><br/>
                                 </>
                                 <CardActions style={{padding: 0, marginTop: 10}} sx={{mt: 4}}>
                                     {!isNotLight ? (

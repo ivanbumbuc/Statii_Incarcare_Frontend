@@ -66,34 +66,14 @@ function MyAccount() {
 
     const userStates = useSelector<ApplicationState>(state => state.startReducer.userReducer) as UserState;
     const [userInfo, setUserInfo] = useState<Profile>(
-        {
-            name: "test",
-            admin: "true",
-            charging: "false"
-        }
+
     );
     const [carList, setCars] = useState([
-        {
-            car_id: '',
-            car_plate: "TM 55 ARG",
-        },
-        {
-            car_id: '',
-            car_plate: "TM 63 AIE",
-        },
-    ]);
+
+    ]as Car[]);
 
     const [bookingList, setBookings] = useState([
-        {
-            start_time: "06-06-2008 15:00:00",
-            end_time: "06-06-2008 17:00:00",
-            plug_type: '',
-        },
-        {
-            start_time: "05-08-2018 15:00:00",
-            end_time: "06-08-2018 15:00:00",
-            plug_tyoe: '',
-        },
+
     ] as Booking[]);
 
     const [open, setOpen] = React.useState(false);
@@ -129,30 +109,30 @@ function MyAccount() {
         setPageCar(0);
     };
 
+
     useEffect(() => {
-        getAccountUserInformation(userStates.user.id).then((result) => {
+        getAccountUserInformation(userStates?.user?.id).then((result) => {
             setUserInfo(result.data);
-            console.log(result.data);
         }).catch((err) => {
            console.log(err);
         });
-    },[]);
+    },[userInfo,userStates.user.id]);
 
     useEffect(() => {
-        getAccountBookingInformation(userStates.user.id).then((result) => {
+        getAccountBookingInformation(userStates?.user?.id).then((result) => {
             setBookings(result.data);
         }).catch((err) => {
            console.log(err);
         });
-    },[bookingList]);
+    },[bookingList,userStates.user.id]);
 
     useEffect(() => {
-        getAccountCarsInformation(userStates.user.id).then((result) => {
+        getAccountCarsInformation(userStates?.user?.id).then((result) => {
             setCars(result.data);
         }).catch((err) => {
             console.log(err);
         });
-    },[carList]);
+    },[carList,userStates.user.id]);
 
     const handleSaveCar = () => {
         editAccountCarsInformation(carId,carPlate).then(() => {}).catch((err) => {
@@ -256,7 +236,7 @@ function MyAccount() {
                                         Username:
                                     </Grid>
                                     <Grid item marginLeft={1}>
-                                        {userInfo.name}
+                                        {userInfo?.name}
                                     </Grid>
 
                                 </Grid>
@@ -268,7 +248,7 @@ function MyAccount() {
                                         Is admin:
                                     </Grid>
                                     <Grid item marginLeft={1}>
-                                        {userInfo.admin == "true" ? <CheckCircleIcon color="success"/> :
+                                        {userInfo?.admin == "true" ? <CheckCircleIcon color="success"/> :
                                             <CancelIcon color="error"/>}
                                     </Grid>
                                 </Grid>
@@ -280,7 +260,7 @@ function MyAccount() {
                                         Is charging:
                                     </Grid>
                                     <Grid item marginLeft={1}>
-                                        {userInfo.charging == "true" ? <CheckCircleIcon color="success"/> :
+                                        {userInfo?.charging == "true" ? <CheckCircleIcon color="success"/> :
                                             <CancelIcon color="error"/>}
                                     </Grid>
                                 </Grid>

@@ -53,6 +53,7 @@ export default function ResponsiveDialog(props: DialogProps) {
 
   const [start,setStart] = useState<boolean>(false);
   const [end,setEnd] = useState<boolean>(false);
+  console.log(props.plugsStation);
   const handleChange = (event: SelectChangeEvent) => {
     setPlugId(event.target.value as string);
     setEnd(false);

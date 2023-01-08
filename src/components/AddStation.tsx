@@ -75,6 +75,7 @@ function AddStation() {
     ]);
 
     const [open, setOpen] = React.useState(false);
+    const [openAdd, setOpenAdd] = React.useState(false);
     const [targetPlug, setTargetPlug] = React.useState( 0 );
     const [dialogPlugName, setPlugName] = React.useState("");
     const [dialogPlugPower, setPlugPower] = React.useState(0);
@@ -91,21 +92,59 @@ function AddStation() {
         setPlugPrice(event.target.value)
     };
     const handleClickOpen = (event: any) => {
+        setTargetPlug(event.target.id-1);
+        setPlugName(plugList[targetPlug].name);
+        setPlugPrice(plugList[targetPlug].price);
+        setPlugPower(plugList[targetPlug].power);
         console.log(event.target.id);
         setOpen(true);
-        setTargetPlug(event.target.id);
+    };
+    const handleClickOpenAdd = (event: any) => {
+        console.log(event.target.id);
+        setOpenAdd(true);
+        // setTargetPlug(event.target.id-1);
     };
 
+    const handleJustClose = (event: any) => {
+        setOpen(false);
+    }
     const handleClose = (event: any) => {
         setOpen(false);
         const newList = [...plugList];
         newList[targetPlug].name = dialogPlugName;
+        newList[targetPlug].price = dialogPlugPrice;
+        newList[targetPlug].power = dialogPlugPower;
         console.log(targetPlug);
         console.log(newList[targetPlug].name);
-        // newList[event.target.id].rollNo = 'New RollNo';
+        setPlugName("");
+        setPlugPrice(0);
+        setPlugPower(0);
 
         setPlugs(newList);
     };
+    const handleDelete = (event: any) => {
+        const newList = plugList.filter((i, itemIndex) => event.target.value-1 != itemIndex);
+        //console.log(newList);
+        setPlugs(newList);
+    }
+    const handleJustCloseAdd = (event: any) => {
+        setOpenAdd(false);
+    };
+    const handleCloseAdd = (event: any) => {
+        setOpenAdd(false);
+        var tempElem= {
+            id : plugList.length+1,
+            name : dialogPlugName,
+            price : dialogPlugPrice,
+            power : dialogPlugPower
+        };
+        setPlugName("");
+        setPlugPrice(0);
+        setPlugPower(0);
+        const newList = [...plugList,tempElem];
+        console.log(newList);
+        setPlugs(newList);
+    }
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(4);
@@ -127,8 +166,7 @@ function AddStation() {
                     <DialogTitle>Edit</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            Write your new car plate and don't forget to click save to successfully change your car
-                            info!
+                            Change the type, amount of power and price for the plug you're editing!
                         </DialogContentText>
                         <TextField
                             autoFocus
@@ -162,10 +200,52 @@ function AddStation() {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button color="error" onClick={handleClose}>Cancel</Button>
-                        <Button color="secondary" onClick={handleClose}>Save</Button>
+                        <Button color="error" onClick={handleJustClose}>Cancel</Button>
+                        <Button color="success" onClick={handleClose}>Save</Button>
                     </DialogActions>
                 </Dialog>
+            <Dialog open={openAdd} onClose={handleCloseAdd}>
+                <DialogTitle>Add</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Write the type, the amount of power and price for the new plug!
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="Plug Type"
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        onChange={handleName}
+                    />
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="power"
+                        label="Power (kW)"
+                        type="number"
+                        fullWidth
+                        variant="standard"
+                        onChange={handlePower}
+                    />
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="price"
+                        label="Price (RON/ORA)"
+                        type="number"
+                        fullWidth
+                        variant="standard"
+                        onChange={handlePrice}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button color="error" onClick={handleJustCloseAdd}>Cancel</Button>
+                    <Button color="success" onClick={handleCloseAdd}>Add</Button>
+                </DialogActions>
+            </Dialog>
                 <Paper sx={{
                     background: "linear-gradient(#79d279 35%, #5F9F5F 65%, #3A5F3A 95%);",
                     display: "flex",
@@ -300,7 +380,7 @@ function AddStation() {
                                                             <TableCell align="center">
                                                                 <Button id={row.id.toString()} onClick={handleClickOpen}
                                                                         color="success">Edit</Button>
-                                                                <Button color="error">Delete</Button>
+                                                                <Button value={row.id.toString()} onClick={handleDelete} color="error">Delete</Button>
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}
@@ -317,12 +397,14 @@ function AddStation() {
                                         onRowsPerPageChange={handleChangeRowsPerPage}
                                     />
                                 </Paper>
+                                <Button onClick={handleClickOpenAdd}
+                                        color="success">Add Plug</Button>
 
                                 <Button
                                     type="submit"
                                     fullWidth
                                     variant="contained"
-                                    sx={{ mt: 3, mb: 2, backgroundColor: "#4a4a4a" }}
+                                    sx={{ mt: 3, mb: 2, backgroundColor: "#79d279" }}
                                 >
                                     Add Station
                                 </Button>

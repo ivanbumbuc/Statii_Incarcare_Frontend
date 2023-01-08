@@ -106,9 +106,9 @@ function ViewStations() {
         setOpen(false);
     };
     const handleDelete = (event: any) => {
-        const newList = plugList.filter((i, itemIndex) => event.target.value-1 != itemIndex);
-        //console.log(newList);
-        setPlugs(newList);
+        // const newList = plugList.filter((i, itemIndex) => event.target.value-1 != itemIndex);
+        // //console.log(newList);
+        // setPlugs(newList);
     }
 
     const [page, setPage] = React.useState(0);

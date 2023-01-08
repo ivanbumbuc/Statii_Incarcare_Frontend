@@ -11,7 +11,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import ElectricalServicesOutlinedIcon from '@mui/icons-material/ElectricalServicesOutlined';
 import {useNavigate} from "react-router-dom";
-import {Cookies} from "typescript-cookie";
+import {Cookies, getCookie} from "typescript-cookie";
+import {useEffect, useState} from "react";
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Logout'];
@@ -33,11 +34,17 @@ function AppBarResponsive() {
     };
 
     const navigate = useNavigate();
+    const [path,setPath] = useState('/home');
+    const [isAdmin,setIsAdmin] = useState('');
     const handleCloseUserMenu = (setting: string) => {
         setAnchorElUser(null);
+        let y = getCookie("isAdmin");
         if(setting === "Profile")
         {
-            navigate('/myaccount')
+            if(y === "true")
+                navigate("/viewstations")
+            else
+                navigate('/myaccount')
         }
         else
         {
@@ -46,6 +53,14 @@ function AppBarResponsive() {
             navigate('/');
         }
     };
+    useEffect(() => {
+        let y = getCookie("isAdmin");
+        if(y==="true")
+            setPath('/addstation');
+        else
+            setPath('/home');
+        setIsAdmin(y as string);
+    },[isAdmin])
 
     return (
         <AppBar position="static" style={{backgroundColor: "#79d279"}}>
@@ -56,7 +71,7 @@ function AppBarResponsive() {
                         variant="h6"
                         noWrap
                         component="a"
-                        href="/home"
+                        href={path}
                         sx={{
                             mr: 2,
                             display: {xs: 'none', md: 'flex'},
@@ -118,7 +133,11 @@ function AppBarResponsive() {
                         >
                             {settings.map((setting) => (
                                 <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
-                                    <Typography textAlign="center">{setting}</Typography>
+                                    {setting === 'Profile' && isAdmin === 'true' ?
+                                    <Typography textAlign="center">Admin</Typography>
+                                        :
+                                        <Typography textAlign="center">{setting}</Typography>
+                                    }
                                 </MenuItem>
                             ))}
                         </Menu>

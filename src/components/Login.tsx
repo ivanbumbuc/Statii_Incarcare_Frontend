@@ -34,12 +34,17 @@ function Login(){
     const navigate = useNavigate();
 
     const dispatch= useDispatch();
-    const {setUser}=bindActionCreators(actionCreators,dispatch); 
+    const {setUser}=bindActionCreators(actionCreators,dispatch);
 
     React.useEffect(() => {
         let x = getCookie("id");
-        if(x != undefined)
-          navigate('/home')
+        let y = getCookie("isAdmin");
+        if(x != undefined) {
+            if (y !== "true")
+                navigate('/home')
+            else
+                navigate('/addstation');
+        }
     },[userId]);
 
     //login and redirect to homepage and set cookie
@@ -57,7 +62,10 @@ function Login(){
             setEmail(response.data.email);
             setCookie("id", response.data.id, { expires: 7 });
             setCookie("isAdmin", response.data.isAdmin, { expires: 7 })
-            navigate("/home");
+            if(response.data.isAdmin === "false")
+                navigate("/home");
+            else
+                navigate("/addstation");
 
         }).catch((err) =>{
             console.log(err.message);

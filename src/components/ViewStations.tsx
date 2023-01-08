@@ -194,7 +194,8 @@ function ViewStations() {
                 flexDirection: "column",
                 alignItems: "center",
                 flexWrap: "wrap",
-            }}>
+                height:'100vh'
+            }} >
                 <Paper
                     sx={{
                         my: 20,

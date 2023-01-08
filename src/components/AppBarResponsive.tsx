@@ -10,6 +10,8 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import ElectricalServicesOutlinedIcon from '@mui/icons-material/ElectricalServicesOutlined';
+import {useNavigate} from "react-router-dom";
+import {Cookies} from "typescript-cookie";
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Logout'];
@@ -20,6 +22,7 @@ function AppBarResponsive() {
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
+
     };
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
@@ -29,8 +32,19 @@ function AppBarResponsive() {
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = () => {
+    const navigate = useNavigate();
+    const handleCloseUserMenu = (setting: string) => {
         setAnchorElUser(null);
+        if(setting === "Profile")
+        {
+            navigate('/myaccount')
+        }
+        else
+        {
+            Cookies.remove('id');
+            Cookies.remove('isAdmin');
+            navigate('/');
+        }
     };
 
     return (
@@ -103,7 +117,7 @@ function AppBarResponsive() {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                                     <Typography textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}

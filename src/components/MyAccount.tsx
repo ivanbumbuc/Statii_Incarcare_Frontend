@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -28,6 +28,16 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AppBarResponsive from "./AppBarResponsive";
+import {
+    deleteAccountCarsInformation,
+    editAccountCarsInformation,
+    getAccountBookingInformation,
+    getAccountCarsInformation,
+    getAccountUserInformation
+} from "../api/account";
+import {useSelector} from "react-redux";
+import {ApplicationState} from "../reducers/type";
+import {getAccountCars} from "../api";
 
 
 const override = css`
@@ -36,76 +46,59 @@ const override = css`
   border-color: red;
   box-sizing: border-box;
 `;
+interface Profile {
+    name:string;
+    admin:string;
+    charging:string;
+}
 
+interface Booking{
+    start_time: string;
+    end_time: string;
+    plug_type: string;
+}
+
+interface Car {
+    car_id: string;
+    car_plate: string;
+}
 function MyAccount() {
-    const [userInfo, setUserInfo] = useState(
+
+    const userStates = useSelector<ApplicationState>(state => state.startReducer.userReducer) as UserState;
+    const [userInfo, setUserInfo] = useState<Profile>(
         {
-            id: null,
             name: "test",
-            password: "12345",
-            is_admin: "true",
-            is_charging: "false"
+            admin: "true",
+            charging: "false"
         }
     );
     const [carList, setCars] = useState([
         {
-            id: undefined,
-            user_id: 1,
+            car_id: '',
             car_plate: "TM 55 ARG",
         },
         {
-            id: undefined,
-            user_id: 1,
+            car_id: '',
             car_plate: "TM 63 AIE",
         },
-        {
-            id: undefined,
-            user_id: 1,
-            car_plate: "TM 64 BOB",
-        },
     ]);
+
     const [bookingList, setBookings] = useState([
         {
-            id: null,
             start_time: "06-06-2008 15:00:00",
             end_time: "06-06-2008 17:00:00",
-            plug_id: null,
-            user_id: 1,
+            plug_type: '',
         },
         {
-            id: null,
             start_time: "05-08-2018 15:00:00",
             end_time: "06-08-2018 15:00:00",
-            plug_id: null,
-            user_id: 1,
+            plug_tyoe: '',
         },
-        {
-            id: null,
-            start_time: "05-08-2017 15:00:00",
-            end_time: "06-08-2017 15:00:00",
-            plug_id: null,
-            user_id: 1,
-        },
-        {
-            id: null,
-            start_time: "05-08-2021 15:00:00",
-            end_time: "06-08-2021 15:00:00",
-            plug_id: null,
-            user_id: 1,
-        },
-        {
-            id: null,
-            start_time: "05-08-2022 15:00:00",
-            end_time: "06-08-2022 15:00:00",
-            plug_id: null,
-            user_id: 1,
-        },
-    ]);
+    ] as Booking[]);
 
     const [open, setOpen] = React.useState(false);
 
-    const handleClickOpen = (event: any) => {
-        console.log(event.target.id);
+    const handleClickOpen = () => {
         setOpen(true);
     };
 
@@ -118,7 +111,8 @@ function MyAccount() {
 
     const [pageCar, setPageCar] = React.useState(0);
     const [rowsPerPageCar, setRowsPerPageCar] = React.useState(3);
-
+    const [carPlate,setCarPlate] = React.useState<string>('');
+    const [carId, setCarId] = React.useState('');
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
@@ -135,6 +129,43 @@ function MyAccount() {
         setPageCar(0);
     };
 
+    useEffect(() => {
+        getAccountUserInformation(userStates.user.id).then((result) => {
+            setUserInfo(result.data);
+            console.log(result.data);
+        }).catch((err) => {
+           console.log(err);
+        });
+    },[]);
+
+    useEffect(() => {
+        getAccountBookingInformation(userStates.user.id).then((result) => {
+            setBookings(result.data);
+        }).catch((err) => {
+           console.log(err);
+        });
+    },[bookingList]);
+
+    useEffect(() => {
+        getAccountCarsInformation(userStates.user.id).then((result) => {
+            setCars(result.data);
+        }).catch((err) => {
+            console.log(err);
+        });
+    },[carList]);
+
+    const handleSaveCar = () => {
+        editAccountCarsInformation(carId,carPlate).then(() => {}).catch((err) => {
+            console.log(err);
+        })
+        handleClose();
+    }
+
+    const deleteCarTable = (id:string) => {
+        deleteAccountCarsInformation(id).catch((err) => {
+            console.log(err);
+        });
+    }
 
     return (
         <div>
@@ -164,11 +195,13 @@ function MyAccount() {
                             type="text"
                             fullWidth
                             variant="standard"
+                            value={carPlate}
+                            onChange={(val) => setCarPlate(val.target.value as string)}
                         />
                     </DialogContent>
                     <DialogActions>
                         <Button color="error" onClick={handleClose}>Cancel</Button>
-                        <Button color="secondary" onClick={handleClose}>Save</Button>
+                        <Button color="secondary" onClick={handleSaveCar}>Save</Button>
                     </DialogActions>
                 </Dialog>
                 <Grid
@@ -235,7 +268,7 @@ function MyAccount() {
                                         Is admin:
                                     </Grid>
                                     <Grid item marginLeft={1}>
-                                        {userInfo.is_admin == "true" ? <CheckCircleIcon color="secondary"/> :
+                                        {userInfo.admin == "true" ? <CheckCircleIcon color="success"/> :
                                             <CancelIcon color="error"/>}
                                     </Grid>
                                 </Grid>
@@ -247,7 +280,7 @@ function MyAccount() {
                                         Is charging:
                                     </Grid>
                                     <Grid item marginLeft={1}>
-                                        {userInfo.is_charging == "true" ? <CheckCircleIcon color="secondary"/> :
+                                        {userInfo.charging == "true" ? <CheckCircleIcon color="success"/> :
                                             <CancelIcon color="error"/>}
                                     </Grid>
                                 </Grid>
@@ -275,9 +308,9 @@ function MyAccount() {
                                                                 {row.car_plate}
                                                             </TableCell>
                                                             <TableCell align="center">
-                                                                <Button id={row.id} onClick={handleClickOpen}
+                                                                <Button id={row.car_id} onClick={() => { setCarId(row.car_id as string);handleClickOpen();}}
                                                                         color="secondary">Edit</Button>
-                                                                <Button color="error">Delete</Button>
+                                                                <Button color="error" onClick={() => {deleteCarTable(row.car_id as string);}}>Delete</Button>
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}
@@ -328,7 +361,7 @@ function MyAccount() {
                                                                 {row.end_time}
                                                             </TableCell>
                                                             <TableCell>
-                                                                {row.plug_id}
+                                                                {row.plug_type}
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}

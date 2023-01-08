@@ -7,6 +7,7 @@ import Login from "./Login";
 import CreateAccount from "./CreateAccount";
 import HomePage from "./HomePage";
 import AddStation from "./AddStation";
+import ViewStations from "./ViewStations";
 import * as actionCreators from "../reducers/start/user/actionUser"
 
 
@@ -41,6 +42,7 @@ function Pages() {
                 <Route path="/home" element={<HomePage/>}/>
                 <Route path="/myaccount" element={<MyAccount/>}/>
                 <Route path="/addstation" element={<AddStation/>}/>
+                <Route path="/viewstations" element={<ViewStations/>}/>
             </Routes>
         </BrowserRouter>
     );

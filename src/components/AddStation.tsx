@@ -28,6 +28,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AppBarResponsive from "./AppBarResponsive";
+import {addPlugStation, addStationAdmin} from "../api/admin";
 
 
 const override = css`
@@ -59,18 +60,6 @@ function AddStation() {
             name: "test2",
             power: 55,
             price: 200,
-        },
-        {
-            id:3,
-            name: "test3",
-            power: 55,
-            price: 200,
-        },
-        {
-            id:4,
-            name: "test4",
-            power: 55,
-            price: 5325,
         },
     ]);
 
@@ -157,7 +146,23 @@ function AddStation() {
         setPage(0);
     };
 
+    const [name, setName] = useState("");
+    const [city, setCity] = useState("");
+    const [address, setAddress] = useState("");
+    const [coordX,setCoordX] =useState(0);
+    const [coordY,setCoordY] = useState(0);
 
+    const addStationAdminPage = () => {
+        addStationAdmin(name,city,address,coordX,coordY)
+            .then((result) => {
+                for(let i=0;i<plugList.length;i++)
+                    addPlugStation(result.data, plugList[i].name, plugList[i].power, plugList[i].price).catch((err) => {
+                        console.log(err + "Station "+i);
+                    })
+            }).catch((err) => {
+            console.log(err + "Statii");
+        })
+    }
     return (
         <div>
             <AppBarResponsive/>
@@ -300,7 +305,7 @@ function AddStation() {
                                     autoComplete="station-name"
                                     autoFocus
                                     sx={{ backgroundColor: "white" }}
-                                    //onChange={(e)=>setEmail(e.currentTarget.value)}
+                                    onChange={(e) => setName(e.currentTarget.value)}
                                 />
                                 <TextField
                                     variant="filled"
@@ -312,6 +317,7 @@ function AddStation() {
                                     label="City"
                                     autoComplete="city"
                                     sx={{ backgroundColor: "white" }}
+                                    onChange={(e) => setCity(e.currentTarget.value)}
                                 />
                                 <TextField
                                     variant="filled"
@@ -323,7 +329,7 @@ function AddStation() {
                                     name="address"
                                     autoComplete="address"
                                     sx={{ backgroundColor: "white" }}
-                                    //onChange={(e)=>setEmail(e.currentTarget.value)}
+                                    onChange={(e) => setAddress(e.currentTarget.value)}
                                 />
                                 <TextField
                                     variant="filled"
@@ -335,7 +341,7 @@ function AddStation() {
                                     name="coordX"
                                     autoComplete="coordX"
                                     sx={{ backgroundColor: "white" }}
-                                    //onChange={(e)=>setEmail(e.currentTarget.value)}
+                                    onChange={(e) => setCoordX(Number(e.currentTarget.value))}
                                 />
                                 <TextField
                                     variant="filled"
@@ -347,7 +353,7 @@ function AddStation() {
                                     name="coordY"
                                     autoComplete="coordY"
                                     sx={{ backgroundColor: "white" }}
-                                    //onChange={(e)=>setEmail(e.currentTarget.value)}
+                                    onChange={(e) => setCoordY(Number(e.currentTarget.value))}
                                 />
                                 <Paper sx={{mt: 3.9, overflow: 'hidden'}}>
                                     <TableContainer sx={{maxHeight: 270}} component={Paper}>
@@ -405,6 +411,7 @@ function AddStation() {
                                     fullWidth
                                     variant="contained"
                                     sx={{ mt: 3, mb: 2, backgroundColor: "#79d279" }}
+                                    onClick={addStationAdminPage}
                                 >
                                     Add Station
                                 </Button>

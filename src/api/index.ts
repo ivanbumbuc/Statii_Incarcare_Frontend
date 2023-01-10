@@ -49,3 +49,11 @@ export const editCar = async (url: string, carId:string, car_plate:string) => {
 export const deleteCar = async (url: string, carId:string) => {
     return await axiosInstance.delete(url,{params:{carId:carId}});
 }
+
+export const addStation = async (url: string, name:string, city:string, address:string, coordx:number, coordy:number) => {
+    return await axiosInstance.post(url,{name:name, city:city, address:address, coordX:coordx, coordY:coordy});
+};
+
+export const addPlugToStation = async (url: string,stationId:string, plugType:string,power:number,price:number) => {
+    return await axiosInstance.post(url,{statioId:stationId,plugType:plugType, power:power, price:price});
+};

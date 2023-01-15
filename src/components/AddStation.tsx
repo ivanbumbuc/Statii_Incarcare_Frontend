@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -29,6 +29,10 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AppBarResponsive from "./AppBarResponsive";
 import {addPlugStation, addStationAdmin} from "../api/admin";
+import {addPlugToStation} from "../api";
+import {addPlugTypeNew, getAllPlugsType} from "../api/plugsType";
+import {useSelector} from "react-redux";
+import {ApplicationState} from "../reducers/type";
 
 
 const override = css`
@@ -53,13 +57,11 @@ function AddStation() {
             id:1,
             name: "test",
             power: 55,
-            price: 200,
         },
         {
             id:2,
             name: "test2",
             power: 55,
-            price: 200,
         },
     ]);
 
@@ -83,7 +85,6 @@ function AddStation() {
     const handleClickOpen = (event: any) => {
         setTargetPlug(event.target.id-1);
         setPlugName(plugList[targetPlug].name);
-        setPlugPrice(plugList[targetPlug].price);
         setPlugPower(plugList[targetPlug].power);
         console.log(event.target.id);
         setOpen(true);
@@ -101,7 +102,6 @@ function AddStation() {
         setOpen(false);
         const newList = [...plugList];
         newList[targetPlug].name = dialogPlugName;
-        newList[targetPlug].price = dialogPlugPrice;
         newList[targetPlug].power = dialogPlugPower;
         console.log(targetPlug);
         console.log(newList[targetPlug].name);
@@ -111,6 +111,8 @@ function AddStation() {
 
         setPlugs(newList);
     };
+    const userStates = useSelector<ApplicationState>(state => state.startReducer.userReducer) as UserState;
+
     const handleDelete = (event: any) => {
         const newList = plugList.filter((i, itemIndex) => event.target.value-1 != itemIndex);
         //console.log(newList);
@@ -124,14 +126,15 @@ function AddStation() {
         var tempElem= {
             id : plugList.length+1,
             name : dialogPlugName,
-            price : dialogPlugPrice,
             power : dialogPlugPower
         };
+        addPlugTypeNew(dialogPlugName, dialogPlugPower).catch((err) => {
+            console.log(err);
+        });
         setPlugName("");
         setPlugPrice(0);
         setPlugPower(0);
         const newList = [...plugList,tempElem];
-        console.log(newList);
         setPlugs(newList);
     }
 
@@ -151,18 +154,25 @@ function AddStation() {
     const [address, setAddress] = useState("");
     const [coordX,setCoordX] =useState(0);
     const [coordY,setCoordY] = useState(0);
-
     const addStationAdminPage = () => {
-        addStationAdmin(name,city,address,coordX,coordY)
-            .then((result) => {
-                for(let i=0;i<plugList.length;i++)
-                    addPlugStation(result.data, plugList[i].name, plugList[i].power, plugList[i].price).catch((err) => {
-                        console.log(err + "Station "+i);
-                    })
-            }).catch((err) => {
-            console.log(err + "Statii");
-        })
+        addStationAdmin(name,city,address,coordX,coordY,userStates.user?.id).catch((err) => {
+            console.log(err);
+        });
     }
+
+    const addPlugsToStation = (id:string) => {
+        for(let i=0;i<plugList.length;i++)
+            addPlugStation(id, plugList[i].name, plugList[i].power,123).catch((err) => {
+                console.log(err + "Station "+i);
+            });
+    }
+    useEffect(() => {
+        getAllPlugsType().then((result) => {
+            setPlugs(result.data);
+        }).catch((err) => {
+            console.log(err);
+        })
+    },[]);
     return (
         <div>
             <AppBarResponsive/>
@@ -219,7 +229,7 @@ function AddStation() {
                         autoFocus
                         margin="dense"
                         id="name"
-                        label="Plug Type"
+                        label="Plug Type Name"
                         type="text"
                         fullWidth
                         variant="standard"
@@ -234,16 +244,6 @@ function AddStation() {
                         fullWidth
                         variant="standard"
                         onChange={handlePower}
-                    />
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="price"
-                        label="Price (RON/ORA)"
-                        type="number"
-                        fullWidth
-                        variant="standard"
-                        onChange={handlePrice}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -362,8 +362,7 @@ function AddStation() {
                                                 <TableRow>
                                                     <TableCell>Plug Type</TableCell>
                                                     <TableCell>Power</TableCell>
-                                                    <TableCell>Price</TableCell>
-                                                    <TableCell align="center">Actions</TableCell>
+                                                    {/*<TableCell align="center">Actions</TableCell>*/}
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -380,14 +379,11 @@ function AddStation() {
                                                             <TableCell>
                                                                 {row.power}
                                                             </TableCell>
-                                                            <TableCell>
-                                                                {row.price}
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                <Button id={row.id.toString()} onClick={handleClickOpen}
-                                                                        color="success">Edit</Button>
-                                                                <Button value={row.id.toString()} onClick={handleDelete} color="error">Delete</Button>
-                                                            </TableCell>
+                                                            {/*<TableCell align="center">*/}
+                                                            {/*    <Button id={row.id.toString()} onClick={handleClickOpen}*/}
+                                                            {/*            color="success">Edit</Button>*/}
+                                                            {/*    <Button value={row.id.toString()} onClick={handleDelete} color="error">Delete</Button>*/}
+                                                            {/*</TableCell>*/}
                                                         </TableRow>
                                                     ))}
                                             </TableBody>
@@ -404,7 +400,7 @@ function AddStation() {
                                     />
                                 </Paper>
                                 <Button onClick={handleClickOpenAdd}
-                                        color="success">Add Plug</Button>
+                                        color="success">Add Plug Type</Button>
 
                                 <Button
                                     type="submit"

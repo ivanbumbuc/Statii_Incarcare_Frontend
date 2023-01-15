@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 
 const axiosInstance = axios.create({
-    baseURL: "https://localhost:7121",
+    baseURL: "http://localhost:5091",
     timeout: 0,
 });
 
@@ -50,10 +50,18 @@ export const deleteCar = async (url: string, carId:string) => {
     return await axiosInstance.delete(url,{params:{carId:carId}});
 }
 
-export const addStation = async (url: string, name:string, city:string, address:string, coordx:number, coordy:number) => {
-    return await axiosInstance.post(url,{name:name, city:city, address:address, coordX:coordx, coordY:coordy});
+export const addStation = async (url: string, name:string, city:string, address:string, coordx:number, coordy:number,idUser:string) => {
+    return await axiosInstance.post(url,{name:name, city:city, address:address, coordX:coordx, coordY:coordy, idUser:idUser});
 };
 
 export const addPlugToStation = async (url: string,stationId:string, plugType:string,power:number,price:number) => {
-    return await axiosInstance.post(url,{statioId:stationId,plugType:plugType, power:power, price:price});
+    return await axiosInstance.post(url,{stationId:stationId,plugType:plugType, power:power, price:price});
+};
+
+export const getPlugsType = async (url: string) => {
+    return await axiosInstance.get(url);
+}
+
+export const addPlugType = async (url: string,name:string, power:number) => {
+    return await axiosInstance.post(url,{name:name, power:power});
 };

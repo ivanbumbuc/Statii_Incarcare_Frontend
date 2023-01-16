@@ -1,17 +1,13 @@
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import {css} from "@emotion/react";
-import {TablePagination} from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
+import {FormControl, InputLabel, Select, SelectChangeEvent, TablePagination} from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -19,15 +15,19 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import PersonIcon from '@mui/icons-material/Person';
-import BatteryChargingFullIcon from '@mui/icons-material/BatteryChargingFull';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AppBarResponsive from "./AppBarResponsive";
+import {addPlugTypeNew, getAllPlugsType} from "../api/plugsType";
+import MenuItem from "@mui/material/MenuItem";
+import {addPlugToStationAdmin, deleteStationAdmin, getPlugsAdmin, getStationsAdmin} from "../api/admin";
+import {useSelector} from "react-redux";
+import {ApplicationState} from "../reducers/type";
+import TextField from "@mui/material/TextField";
+import {addPlugToStation} from "../api";
 
 
 const override = css`
@@ -37,10 +37,20 @@ const override = css`
   box-sizing: border-box;
 `;
 
+interface IStatie {
+    id: string;
+    name: string;
+    city: string;
+    address: string;
+    plugs: string;
+    latitude: number;
+    longitude: Number;
+}
+
 function ViewStations() {
     const [userInfo, setUserInfo] = useState(
         {
-            id: null,
+            id: 'dad623e82db2ud82dj',
             name: "test",
             password: "12345",
             is_admin: "true",
@@ -49,73 +59,70 @@ function ViewStations() {
     );
     const [stationList, setStations] = useState([
         {
-            id: 1,
-            name: "Station 1",
+            id: 'chewywe627e237e237e82',
+            name: "cv",
             city: "Timisoara",
-            address: "FC Ripensia",
-            coordX: 5,
-            coordY: 3,
-            plugs: [
-                {
-                    id:1,
-                    name: "test",
-                    power: 55,
-                    price: 200,
-                },
-                {
-                    id:2,
-                    name: "test2",
-                    power: 55,
-                    price: 200,
-                },
-                {
-                    id:3,
-                    name: "test3",
-                    power: 55,
-                    price: 200,
-                },
-                {
-                    id:4,
-                    name: "test4",
-                    power: 55,
-                    price: 5325,
-                },
-            ]
+            address: "",
+            latitude: 45.75554707085215,
+            longitude: 21.22867584228516,
         },
         ]
     );
     const [plugList, setPlugs] = useState([
         {
-            id:1,
+            id:"",
             name: "test",
             power: 55,
             price: 200,
         },
     ])
 
+    const [plugTypes, setPlugTypes] = useState([
+        {
+            id:1,
+            name: "test",
+            power: 55,
+        },
+        {
+            id:2,
+            name: "test2",
+            power: 55,
+        },
+    ]);
+
+
     const [open, setOpen] = React.useState(false);
     const [targetStation, setTargetStation] = React.useState( 0 );
+    const [openAdd, setOpenAdd] = React.useState(false);
 
-
-    const handleClickOpen = (event: any) => {
-        setTargetStation(event.target.id-1);
-        setPlugs(stationList[targetStation].plugs);
+    const handleClickOpen = (id:string) => {
+       // setTargetStation(event.target.id-1);
+        getPlugsAdmin(id).then((result) => {
+            setPlugs(result.data);
+        }).catch((err) => {
+            console.log(err);
+        });
         setOpen(true);
     };
     const handleClose = (event: any) => {
         setOpen(false);
     };
-    const handleDelete = (event: any) => {
+    const handleDelete = (id:string) => {
         // const newList = plugList.filter((i, itemIndex) => event.target.value-1 != itemIndex);
         // //console.log(newList);
         // setPlugs(newList);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        const newList = stationList.filter((st) => { st?.id != id});
+        deleteStationAdmin(id).catch((err) => {console.log(err)});
+        setStations(newList);
     }
 
     const [page, setPage] = React.useState(0);
     const [pagePlug, setPagePlug] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(4);
     const [rowsPerPagePlug, setRowsPerPagePlug] = React.useState(5);
-
+    const [price,setPrice] = React.useState(0);
+    const [idStation, setIdStation] = useState('');
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
@@ -130,6 +137,49 @@ function ViewStations() {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
+
+    const handleCloseAdd = (event: any) => {
+        addPlugToStationAdmin(idStation, type, price).catch((err) => {
+            console.log(err);
+        });
+        setOpenAdd(false);
+        setType('');
+    }
+
+    const handlePrice = (event: any) => {
+        setPrice(event.currentTarget.value);
+    }
+
+    const handleJustCloseAdd = (event: any) => {
+        setOpenAdd(false);
+        setType('');
+    };
+
+    const handleOpenAddPlug = (id: string) => {
+        setOpenAdd(true);
+        setIdStation(id);
+        getAllPlugsType().then((result) => {
+            setPlugTypes(result.data);
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const [type,setType] = useState<string>('');
+
+    const handleChangeTypeOfPlug = (event: SelectChangeEvent) => {
+        setType(event.target.value as string);
+    };
+
+    const userStates = useSelector<ApplicationState>(state => state.startReducer.userReducer) as UserState;
+
+    useEffect(() => {
+        getStationsAdmin(userStates.user.id).then((result) => {
+            setStations(result.data);
+        }).catch((err) => {
+            console.log(err);
+        });
+    },[stationList,userStates.user.id]);
 
     return (
         <div>
@@ -186,6 +236,48 @@ function ViewStations() {
                 </DialogContent>
                 <DialogActions>
                     <Button color="success" onClick={handleClose}>Close</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={openAdd} onClose={handleCloseAdd}>
+                <DialogTitle>Add</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Select the type and power, and write the price for the new plug!
+                    </DialogContentText>
+
+                    <FormControl style={{width:300,marginTop:20 ,marginBottom:20}}>
+                        <InputLabel id="demo-simple-select-label">Type of plugs</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={type}
+                            label="Type"
+                            onChange={handleChangeTypeOfPlug}
+                        >
+                            {plugTypes?.map((st) => {
+                                return (
+                                    <MenuItem value={st.id}>Type: {st.name}, Power: {st.power}</MenuItem>
+                                );
+                            })}
+                        </Select>
+                    </FormControl>
+
+                    <TextField
+                        style={{width:300}}
+                        autoFocus
+                        margin="dense"
+                        id="price"
+                        label="Price (eur)"
+                        type="number"
+                        fullWidth
+                        variant="standard"
+                        onChange={handlePrice}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button color="error" onClick={handleJustCloseAdd}>Cancel</Button>
+                    <Button color="success" onClick={handleCloseAdd}>Add</Button>
                 </DialogActions>
             </Dialog>
             <Paper sx={{
@@ -263,15 +355,17 @@ function ViewStations() {
                                                             {row.address}
                                                         </TableCell>
                                                         <TableCell>
-                                                            {row.coordX}
+                                                            {row.latitude}
                                                         </TableCell>
                                                         <TableCell>
-                                                            {row.coordY}
+                                                            {row.longitude}
                                                         </TableCell>
                                                         <TableCell align="center">
-                                                            <Button id={row.id.toString()} onClick={handleClickOpen}
+                                                            <Button id={row.id.toString()} onClick={() => {handleOpenAddPlug(row.id)}}
+                                                                    color="secondary">Add Plug</Button>
+                                                            <Button id={row.id.toString()} onClick={() => {handleClickOpen(row.id)}}
                                                                     color="success">Plugs</Button>
-                                                            <Button value={row.id.toString()} onClick={handleDelete} color="error">Delete</Button>
+                                                            <Button value={row.id.toString()} onClick={() => {handleDelete(row.id)}} color="error">Delete</Button>
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}

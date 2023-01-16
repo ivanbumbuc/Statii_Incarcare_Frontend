@@ -65,3 +65,19 @@ export const getPlugsType = async (url: string) => {
 export const addPlugType = async (url: string,name:string, power:number) => {
     return await axiosInstance.post(url,{name:name, power:power});
 };
+
+export const getAllStationsAdmin = async (url: string,id: string) => {
+    return await axiosInstance.get(url,{params: {id:id}});
+}
+
+export const addPlugAdmin = async (url: string, idStation:string, idType:string, price: number) => {
+    return await axiosInstance.post(url,{idStation: idStation, idType: idType, price: price});
+};
+
+export const getPlugsStationsAdmin = async (url: string, id: string) => {
+    return await axiosInstance.get(url, {params: {id: id}});
+}
+
+export const deleteStation = async (url: string, stationId:string) => {
+    return await axiosInstance.delete(url,{params:{id:stationId}});
+}
